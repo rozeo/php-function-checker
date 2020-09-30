@@ -34,8 +34,6 @@ class Finder
 
         $this->ast = (new ParserFactory)->create(ParserFactory::PREFER_PHP7)
             ->parse(file_get_contents($filepath));
-
-        var_dump($this->ast);
     }
 
     public function findFunctions(array $names) {
@@ -58,7 +56,9 @@ class Finder
                     if (($name = $stmts->expr->name) instanceof FullyQualified) {
                         $funcName = join("\\", $name->parts);
                     } else {
-                        $funcName = join("\\", array_merge([$namespace], $name->parts));
+                        $funcName = join("\\", array_merge(
+                            $namespace !== '' ? [$namespace]: [], $name->parts
+                        ));
                     }
 
                     if (($index = array_search($funcName, $names)) !== false) {
@@ -70,7 +70,9 @@ class Finder
                     if (($name = $stmts->expr->name) instanceof FullyQualified) {
                         $funcName = join("\\", $stmts->expr->class->parts) . '::' . $stmts->expr->name->name;
                     } else {
-                        $funcName = join("\\", array_merge([$namespace], $stmts->expr->class->parts)) . '::' . $stmts->expr->name->name;
+                        $funcName = join("\\", array_merge(
+                            $namespace !== '' ? [$namespace]: [], $stmts->expr->class->parts
+                            )) . '::' . $stmts->expr->name->name;
                     }
 
                     if (($index = array_search($funcName, $names)) !== false) {
