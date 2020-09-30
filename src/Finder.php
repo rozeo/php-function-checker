@@ -78,8 +78,10 @@ class Finder
                 break;
 
             default:
-                foreach ($stmts->stmts as $s) {
-                    $this->_recursion($s, $namespace);
+                if (property_exists($stmts, 'stmts')) {
+                    foreach ($stmts->stmts as $s) {
+                        $this->_recursion($s, $namespace);
+                    }
                 }
                 break;
         }
@@ -87,7 +89,9 @@ class Finder
 
     protected function processExpression(string $namespace, Stmt\Expression $expression): void
     {
-        $functionName = $this->makeFunctionName($expression->expr, $namespace);
+        if (!$functionName = $this->makeFunctionName($expression->expr, $namespace)) {
+            return;
+        }
 
         if (($index = array_search($functionName, $this->findTargets)) !== false) {
             $this->result->push(new Result(
@@ -97,7 +101,7 @@ class Finder
         }
     }
 
-    protected function makeFunctionName(Expr $expr, $namespace): string
+    protected function makeFunctionName(Expr $expr, $namespace): ?string
     {
         if ($expr instanceof Expr\FuncCall) {
             if (($name = $expr->name) instanceof FullyQualified) {
@@ -118,7 +122,6 @@ class Finder
                         $namespace !== '' ? [$namespace]: [], $expr->class->parts
                     )) . '::' . $expr->name->name;
         }
-
-        throw new InvalidArgumentException("Not recognized type");
+        return null;
     }
 }

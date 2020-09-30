@@ -3,7 +3,8 @@
     "type": "library",
     "require": {
         "php": "^7.2",
-        "nikic/php-parser": "^4.10"
+        "nikic/php-parser": "^4.10",
+        "symfony/yaml": "^5.1"
     },
     "license": "MIT",
     "authors": [

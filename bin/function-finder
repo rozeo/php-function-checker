@@ -1,0 +1,65 @@
+#!/usr/bin/env php
+<?php
+
+// load autoloader
+$pathes = [
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/../../../autoload.php'
+];
+
+foreach ($pathes as $path) {
+    if (file_exists($path)) {
+        require_once $path;
+    }
+}
+
+$parameters = getopt("c:");
+if (!array_key_exists('c', $parameters)) {
+    echo "config file not selected.";
+    exit(1);
+}
+
+$parsed = (new Symfony\Component\Yaml\Parser())->parseFile($parameters['c']);
+
+if (!array_key_exists('targets', $parsed)) {
+    echo "Not found targets, in config file";
+    exit(1);
+}
+
+if (!array_key_exists('directory', $parsed)) {
+    echo "Not found check directory, in config file";
+    exit(1);
+}
+
+foreach ($parsed['directory'] as $directory) {
+    if (($path = realpath($directory)) === null) {
+        continue;
+    }
+
+    runScript(glob($path . "/**"), $parsed['targets']);
+}
+
+function runScript(array $files, array $targets) {
+    foreach ($files as $file) {
+        if (!preg_match('/\.php$/', $file)) {
+            continue;
+        }
+
+        $finder = new \Rozeo\Checker\Finder($file);
+        outputResult(
+                $finder->setTargets($targets)
+            ->execute()
+        );
+    }
+}
+
+function outputResult(\Rozeo\Checker\ResultSet $resultSet) {
+    if (count($resultSet->get()) === 0) {
+        return;
+    }
+
+    echo "file: {$resultSet->getFilePath()}\n";
+    foreach ($resultSet as $result) {
+        echo "  L{$result->getLine()} exists [{$result->getFunctionName()}].\n";
+    }
+}
