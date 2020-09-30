@@ -1,0 +1,20 @@
+{
+    "name": "rozeo/function-checker",
+    "type": "library",
+    "require": {
+        "php": "^7.2",
+        "nikic/php-parser": "^4.10"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "rozeo",
+            "email": "st.prog0908@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Rozeo\\Checker\\": "src/"
+        }
+    }
+}
