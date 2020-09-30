@@ -31,13 +31,16 @@ if (!array_key_exists('directory', $parsed)) {
     exit(1);
 }
 
+$exitCode = 0;
 foreach ($parsed['directory'] as $directory) {
+    echo "$directory\n";
     if (($path = realpath($directory)) === null) {
         continue;
     }
 
-    runScript(glob($path . "/**"), $parsed['targets']);
+    $exitCode = $exitCode | runScript(glob($path . "/**"), $parsed['targets']);
 }
+exit($exitCode);
 
 function runScript(array $files, array $targets) {
     $exitCode = 0;
@@ -47,6 +50,7 @@ function runScript(array $files, array $targets) {
         }
 
         $finder = new \Rozeo\Checker\Finder($file);
+
         $result = $finder->setTargets($targets)
             ->execute();
 
@@ -54,7 +58,7 @@ function runScript(array $files, array $targets) {
         $exitCode = $exitCode | (count($result->get()) > 0);
     }
 
-    exit($exitCode);
+    return $exitCode;
 }
 
 function outputResult(\Rozeo\Checker\ResultSet $resultSet) {
