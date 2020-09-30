@@ -34,7 +34,6 @@ jobs:
       run: composer install
 
     - name: running phpstan
-      env:
       run: ./bin/function-finder -c config.yaml
 
 
