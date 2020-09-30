@@ -33,7 +33,6 @@ if (!array_key_exists('directory', $parsed)) {
 
 $exitCode = 0;
 foreach ($parsed['directory'] as $directory) {
-    echo "$directory\n";
     if (($path = realpath($directory)) === null) {
         continue;
     }
