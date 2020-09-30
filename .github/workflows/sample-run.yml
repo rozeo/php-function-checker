@@ -32,8 +32,11 @@ jobs:
 
     - name: install composer packages
       run: composer install
+    
+    - name: check directory
+      run: ls -la
 
-    - name: running phpstan
+    - name: running finder
       run: ./bin/function-finder -c config.yaml
 
 
