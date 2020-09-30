@@ -77,6 +77,14 @@ class Finder
                 $this->processExpression($namespace, $stmts);
                 break;
 
+            case $stmts instanceof Stmt\Echo_:
+                if (($index = array_search('echo', $this->findTargets)) !== false) {
+                    $this->result->push(new Result(
+                        $this->findTargets[$index],
+                        $stmts->getLine()
+                    ));
+                }
+
             default:
                 if (property_exists($stmts, 'stmts')) {
                     foreach ($stmts->stmts as $s) {

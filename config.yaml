@@ -5,3 +5,4 @@ directory:
 targets:
   - var_dump
   - not_allowed_function
+  - echo
